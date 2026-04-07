@@ -35,7 +35,10 @@ function AnimatedDot({ sizeClass, color, hollow, animStyle, animEnabled, isRecor
   // Ripple — stable dot + two expanding rings behind it (staggered for water-drop effect)
   if (animEnabled && animStyle === 'ripple') {
     return (
-      <div className="relative">
+      <div
+        className="relative overflow-hidden rounded-full"
+        style={{ padding: '12px', margin: '-12px' }}
+      >
         {/* First ring */}
         <div
           className="absolute inset-0 rounded-full animate-ripple"
@@ -67,7 +70,10 @@ function AnimatedDot({ sizeClass, color, hollow, animStyle, animEnabled, isRecor
   // Ping — stable dot + scaling ghost behind it
   if (animEnabled && animStyle === 'ping') {
     return (
-      <div className="relative">
+      <div
+        className="relative overflow-hidden rounded-full"
+        style={{ padding: '12px', margin: '-12px' }}
+      >
         <div
           className="absolute inset-0 rounded-full animate-ping"
           style={{ backgroundColor: color, opacity: 0.7, animationDuration: duration }}

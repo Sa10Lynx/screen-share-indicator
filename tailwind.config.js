@@ -31,12 +31,12 @@ export default {
         },
         'ripple': {
           '0%':   { transform: 'scale(1)',   opacity: '0.7' },
-          '100%': { transform: 'scale(5)',   opacity: '0'   },
+          '100%': { transform: 'scale(3)',   opacity: '0'   },
         },
         'ripple-delayed': {
           '0%':   { transform: 'scale(1)',   opacity: '0'   },
           '15%':  { transform: 'scale(1)',   opacity: '0.5' },
-          '100%': { transform: 'scale(5)',   opacity: '0'   },
+          '100%': { transform: 'scale(3)',   opacity: '0'   },
         },
         'blink': {
           '0%':   { opacity: '1', transform: 'scale(1)'   },
