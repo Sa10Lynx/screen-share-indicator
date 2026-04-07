@@ -96,7 +96,8 @@ function Indicator({ participantCount = 0 }) {
     size,
     colorTheme,
     animationStyle,
-    customGif,
+    sharingGif,
+    recordingGif,
   } = useIndicator()
 
   const isVisible = isSharing
@@ -108,8 +109,12 @@ function Indicator({ participantCount = 0 }) {
   const sizeClass = SIZES[size]?.classes ?? SIZES.md.classes
   const gifPx = SIZES[size]?.gifPx ?? SIZES.md.gifPx
 
+  // Pick the active GIF based on state — fall back to sharing GIF if no recording GIF set
+  const activeGif = isInRecordingMode ? (recordingGif ?? sharingGif) : sharingGif
+  const gifMode = !!activeGif
+
   const glowStyle =
-    isVisible && !customGif
+    isVisible && !gifMode
       ? { boxShadow: `0 0 0 3px ${activeColor}30, 0 0 14px ${activeColor}60` }
       : {}
 
@@ -137,9 +142,9 @@ function Indicator({ participantCount = 0 }) {
       ].join(' ')}
     >
       {/* GIF mode — render <img> instead of animated dot */}
-      {customGif ? (
+      {gifMode ? (
         <img
-          src={customGif}
+          src={activeGif}
           alt={
             isInRecordingMode
               ? 'Recording indicator animation'

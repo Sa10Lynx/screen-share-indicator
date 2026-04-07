@@ -63,6 +63,66 @@ function PreviewDot({ animClass, style, color = '#0066FF', animDuration }) {
   )
 }
 
+// GIF row — preset buttons + upload for a single GIF slot (sharing or recording)
+function GifRow({ label, color, activeGif, onSelect }) {
+  const borderColor = color === 'blue' ? 'ring-blue-500' : 'ring-orange-500'
+  const bgActive = color === 'blue' ? 'bg-blue-600/25' : 'bg-orange-600/25'
+
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1.5">{label}</p>
+      <div className="grid grid-cols-4 gap-1.5">
+        {GIF_PRESETS.map((dino) => (
+          <button
+            key={dino.label}
+            onClick={() => onSelect(dino.src)}
+            aria-label={`${label}: ${dino.label}`}
+            aria-pressed={activeGif === dino.src}
+            className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all duration-150 ${
+              activeGif === dino.src
+                ? `${bgActive} ring-1 ${borderColor}`
+                : 'bg-slate-600/40 hover:bg-slate-500/50'
+            }`}
+          >
+            <img
+              src={dino.src}
+              alt={dino.label}
+              className="w-8 h-8"
+              style={{ imageRendering: 'pixelated' }}
+            />
+            <span className="text-[10px] text-gray-400">{dino.label}</span>
+          </button>
+        ))}
+      </div>
+      <label className="flex items-center justify-center gap-2 w-full min-h-[44px] py-2.5 sm:py-2 px-4 mt-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-200 bg-slate-600/70 text-gray-400 hover:bg-slate-500/70 hover:text-white">
+        📁 Upload GIF
+        <input
+          type="file"
+          accept="image/gif"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0]
+            if (!file || file.type !== 'image/gif') return
+            if (file.size > GIF_MAX_BYTES) {
+              alert('GIF must be under 512 KB')
+              return
+            }
+            const valid = await isValidGifFile(file)
+            if (!valid) {
+              alert('Invalid GIF file — magic bytes do not match')
+              return
+            }
+            const reader = new FileReader()
+            reader.onload = () => onSelect(reader.result)
+            reader.readAsDataURL(file)
+            e.target.value = ''
+          }}
+        />
+      </label>
+    </div>
+  )
+}
+
 function Controls() {
   const {
     isSharing,
@@ -79,11 +139,15 @@ function Controls() {
     setColorTheme,
     animationStyle,
     setAnimationStyle,
-    customGif,
-    setCustomGif,
+    sharingGif,
+    setSharingGif,
+    recordingGif,
+    setRecordingGif,
     videoSource,
     setVideoSource,
   } = useIndicator()
+
+  const gifMode = !!(sharingGif || recordingGif)
   return (
     <div
       className="bg-slate-800/60 backdrop-blur border border-slate-700 rounded-xl p-4 sm:p-5 space-y-5 sm:space-y-6 lg:sticky lg:top-8"
@@ -220,16 +284,22 @@ function Controls() {
           {/* Tab-style toggle */}
           <div className="grid grid-cols-2 gap-1.5" role="tablist" aria-label="Indicator mode">
             <OptionBtn
-              active={!customGif}
-              onClick={() => setCustomGif(null)}
+              active={!gifMode}
+              onClick={() => {
+                setSharingGif(null)
+                setRecordingGif(null)
+              }}
               ariaLabel="Indicator mode: Dot animation"
             >
               ● Dot Animation
             </OptionBtn>
             <OptionBtn
-              active={!!customGif}
+              active={gifMode}
               onClick={() => {
-                if (!customGif) setCustomGif('/dinos/DinoSprites_doux.gif')
+                if (!gifMode) {
+                  setSharingGif('/dinos/DinoSprites_doux.gif')
+                  setRecordingGif('/dinos/DinoSprites_mort.gif')
+                }
               }}
               ariaLabel="Indicator mode: Custom GIF"
             >
@@ -238,7 +308,7 @@ function Controls() {
           </div>
 
           {/* ── Dot animation options (only when GIF not active) ── */}
-          {!customGif && (
+          {!gifMode && (
             <div className="grid grid-cols-2 gap-1.5">
               {ANIMATION_STYLES.map((s) => (
                 <button
@@ -267,57 +337,22 @@ function Controls() {
           )}
 
           {/* ── GIF options (only when GIF mode active) ── */}
-          {customGif && (
-            <div className="space-y-2">
-              <div className="grid grid-cols-4 gap-1.5">
-                {GIF_PRESETS.map((dino) => (
-                  <button
-                    key={dino.label}
-                    onClick={() => setCustomGif(dino.src)}
-                    aria-label={`Select ${dino.label} GIF`}
-                    aria-pressed={customGif === dino.src}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all duration-150 ${
-                      customGif === dino.src
-                        ? 'bg-blue-600/25 ring-1 ring-blue-500'
-                        : 'bg-slate-600/40 hover:bg-slate-500/50'
-                    }`}
-                  >
-                    <img
-                      src={dino.src}
-                      alt={dino.label}
-                      className="w-8 h-8"
-                      style={{ imageRendering: 'pixelated' }}
-                    />
-                    <span className="text-[10px] text-gray-400">{dino.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              <label className="flex items-center justify-center gap-2 w-full min-h-[44px] py-2.5 sm:py-2 px-4 rounded-lg text-xs font-semibold cursor-pointer transition-all duration-200 bg-slate-600/70 text-gray-400 hover:bg-slate-500/70 hover:text-white">
-                📁 Upload GIF
-                <input
-                  type="file"
-                  accept="image/gif"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0]
-                    if (!file || file.type !== 'image/gif') return
-                    if (file.size > GIF_MAX_BYTES) {
-                      alert('GIF must be under 512 KB')
-                      return
-                    }
-                    const valid = await isValidGifFile(file)
-                    if (!valid) {
-                      alert('Invalid GIF file — magic bytes do not match')
-                      return
-                    }
-                    const reader = new FileReader()
-                    reader.onload = () => setCustomGif(reader.result)
-                    reader.readAsDataURL(file)
-                    e.target.value = ''
-                  }}
-                />
-              </label>
+          {gifMode && (
+            <div className="space-y-3">
+              {/* Sharing GIF selector */}
+              <GifRow
+                label="Sharing GIF"
+                color="blue"
+                activeGif={sharingGif}
+                onSelect={setSharingGif}
+              />
+              {/* Recording GIF selector */}
+              <GifRow
+                label="Recording GIF"
+                color="orange"
+                activeGif={recordingGif}
+                onSelect={setRecordingGif}
+              />
             </div>
           )}
         </div>

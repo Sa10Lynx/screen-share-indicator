@@ -11,8 +11,11 @@ function Dashboard() {
     position,
     colorTheme,
     animationStyle,
-    customGif,
+    sharingGif,
+    recordingGif,
   } = useIndicator()
+
+  const gifMode = !!(sharingGif || recordingGif)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 px-4 py-6 sm:p-6 lg:p-8">
@@ -59,7 +62,7 @@ function Dashboard() {
               { label: 'Animation', value: animationEnabled ? 'ON' : 'OFF', on: animationEnabled },
               { label: 'Position', value: position, on: true },
               { label: 'Theme', value: colorTheme, on: true },
-              { label: 'Anim Style', value: customGif ? 'GIF' : animationStyle, on: true },
+              { label: 'Anim Style', value: gifMode ? 'GIF' : animationStyle, on: true },
             ].map((item) => (
               <div key={item.label}>
                 <p className="text-gray-500 text-[10px] sm:text-xs mb-1">{item.label}</p>

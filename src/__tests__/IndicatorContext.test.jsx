@@ -27,7 +27,8 @@ describe('IndicatorContext', () => {
     expect(result.current.size).toBe('md')
     expect(result.current.colorTheme).toBe('default')
     expect(result.current.animationStyle).toBe('pulse')
-    expect(result.current.customGif).toBeNull()
+    expect(result.current.sharingGif).toBeNull()
+    expect(result.current.recordingGif).toBeNull()
   })
 
   it('can toggle isSharing', () => {
@@ -66,9 +67,15 @@ describe('IndicatorContext', () => {
     expect(result.current.animationStyle).toBe('ripple')
   })
 
-  it('can set custom gif', () => {
+  it('can set sharing gif', () => {
     const { result } = renderHook(() => useIndicator(), { wrapper })
-    act(() => result.current.setCustomGif('/dinos/DinoSprites_doux.gif'))
-    expect(result.current.customGif).toBe('/dinos/DinoSprites_doux.gif')
+    act(() => result.current.setSharingGif('/dinos/DinoSprites_doux.gif'))
+    expect(result.current.sharingGif).toBe('/dinos/DinoSprites_doux.gif')
+  })
+
+  it('can set recording gif', () => {
+    const { result } = renderHook(() => useIndicator(), { wrapper })
+    act(() => result.current.setRecordingGif('/dinos/DinoSprites_mort.gif'))
+    expect(result.current.recordingGif).toBe('/dinos/DinoSprites_mort.gif')
   })
 })

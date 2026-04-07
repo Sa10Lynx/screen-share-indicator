@@ -15,8 +15,8 @@ import {
 } from '../config/constants'
 
 describe('constants', () => {
-  it('exports 6 storage keys', () => {
-    expect(Object.keys(STORAGE_KEYS)).toHaveLength(6)
+  it('exports 7 storage keys', () => {
+    expect(Object.keys(STORAGE_KEYS)).toHaveLength(7)
     expect(STORAGE_KEYS.ANIMATION).toBe('pref-animation')
   })
 
@@ -81,7 +81,8 @@ describe('constants', () => {
       size: 'md',
       colorTheme: 'default',
       animationStyle: 'pulse',
-      customGif: null,
+      sharingGif: null,
+      recordingGif: null,
       videoSource: 'none',
     })
   })

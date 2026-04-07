@@ -5,7 +5,8 @@ export const STORAGE_KEYS = {
   SIZE: 'pref-size',
   THEME: 'pref-theme',
   ANIM_STYLE: 'pref-anim-style',
-  CUSTOM_GIF: 'pref-custom-gif',
+  SHARING_GIF: 'pref-sharing-gif',
+  RECORDING_GIF: 'pref-recording-gif',
 }
 
 // ── Indicator colors per theme ───────────────────────────────────
@@ -78,6 +79,7 @@ export const DEFAULTS = {
   size: 'md',
   colorTheme: 'default',
   animationStyle: 'pulse',
-  customGif: null,
+  sharingGif: null,
+  recordingGif: null,
   videoSource: 'none',
 }

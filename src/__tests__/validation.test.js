@@ -58,25 +58,38 @@ describe('validateStoredValue', () => {
     expect(validateStoredValue('pref-anim-style', 'bounce', fallback)).toBe(fallback)
   })
 
-  // pref-custom-gif — null, /dinos/ path, or data URI
-  it('accepts null for custom gif', () => {
-    expect(validateStoredValue('pref-custom-gif', null, fallback)).toBeNull()
+  // pref-sharing-gif / pref-recording-gif — null, /dinos/ path, or data URI
+  it('accepts null for sharing gif', () => {
+    expect(validateStoredValue('pref-sharing-gif', null, fallback)).toBeNull()
   })
 
-  it('accepts /dinos/ paths', () => {
-    expect(validateStoredValue('pref-custom-gif', '/dinos/test.gif', fallback)).toBe(
+  it('accepts null for recording gif', () => {
+    expect(validateStoredValue('pref-recording-gif', null, fallback)).toBeNull()
+  })
+
+  it('accepts /dinos/ paths for sharing gif', () => {
+    expect(validateStoredValue('pref-sharing-gif', '/dinos/test.gif', fallback)).toBe(
+      '/dinos/test.gif',
+    )
+  })
+
+  it('accepts /dinos/ paths for recording gif', () => {
+    expect(validateStoredValue('pref-recording-gif', '/dinos/test.gif', fallback)).toBe(
       '/dinos/test.gif',
     )
   })
 
   it('accepts data:image/gif;base64 URIs', () => {
     const uri = 'data:image/gif;base64,R0lGODlh'
-    expect(validateStoredValue('pref-custom-gif', uri, fallback)).toBe(uri)
+    expect(validateStoredValue('pref-sharing-gif', uri, fallback)).toBe(uri)
+    expect(validateStoredValue('pref-recording-gif', uri, fallback)).toBe(uri)
   })
 
-  it('rejects arbitrary strings for custom gif', () => {
-    expect(validateStoredValue('pref-custom-gif', 'http://evil.com/x.gif', fallback)).toBe(fallback)
-    expect(validateStoredValue('pref-custom-gif', '<script>', fallback)).toBe(fallback)
+  it('rejects arbitrary strings for gif keys', () => {
+    expect(validateStoredValue('pref-sharing-gif', 'http://evil.com/x.gif', fallback)).toBe(
+      fallback,
+    )
+    expect(validateStoredValue('pref-recording-gif', '<script>', fallback)).toBe(fallback)
   })
 
   // unknown keys — pass through

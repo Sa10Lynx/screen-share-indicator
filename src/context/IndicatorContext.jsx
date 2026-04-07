@@ -22,7 +22,11 @@ export function IndicatorProvider({ children }) {
     STORAGE_KEYS.ANIM_STYLE,
     DEFAULTS.animationStyle,
   )
-  const [customGif, setCustomGif] = useLocalStorage(STORAGE_KEYS.CUSTOM_GIF, DEFAULTS.customGif)
+  const [sharingGif, setSharingGif] = useLocalStorage(STORAGE_KEYS.SHARING_GIF, DEFAULTS.sharingGif)
+  const [recordingGif, setRecordingGif] = useLocalStorage(
+    STORAGE_KEYS.RECORDING_GIF,
+    DEFAULTS.recordingGif,
+  )
 
   const value = {
     // Session
@@ -43,8 +47,10 @@ export function IndicatorProvider({ children }) {
     setColorTheme,
     animationStyle,
     setAnimationStyle,
-    customGif,
-    setCustomGif,
+    sharingGif,
+    setSharingGif,
+    recordingGif,
+    setRecordingGif,
   }
 
   return <IndicatorContext.Provider value={value}>{children}</IndicatorContext.Provider>

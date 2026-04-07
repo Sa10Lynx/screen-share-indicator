@@ -35,7 +35,11 @@ const VALIDATORS = {
   'pref-size': (v) => VALID_SIZES.has(v),
   'pref-theme': (v) => VALID_COLOR_THEMES.has(v),
   'pref-anim-style': (v) => VALID_ANIM_STYLES.has(v),
-  'pref-custom-gif': (v) =>
+  'pref-sharing-gif': (v) =>
+    v === null ||
+    (typeof v === 'string' && v.startsWith('/dinos/')) ||
+    (typeof v === 'string' && v.startsWith('data:image/gif;base64,')),
+  'pref-recording-gif': (v) =>
     v === null ||
     (typeof v === 'string' && v.startsWith('/dinos/')) ||
     (typeof v === 'string' && v.startsWith('data:image/gif;base64,')),
@@ -54,8 +58,9 @@ export function safeSetItem(key, value) {
     return true
   } catch (e) {
     if (e.name === 'QuotaExceededError' || e.code === 22) {
-      // Evict only the custom-gif data (largest item) and retry once
-      localStorage.removeItem('pref-custom-gif')
+      // Evict GIF data (largest items) and retry once
+      localStorage.removeItem('pref-sharing-gif')
+      localStorage.removeItem('pref-recording-gif')
       try {
         localStorage.setItem(key, JSON.stringify(value))
         return true
